@@ -1,0 +1,39 @@
+---
+
+- name: Install essential packages
+  become: yes
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - "linux-image-extra-{{ ansible_kernel }}"
+    - linux-image-extra-virtual
+
+- name: Add Docker gpg key
+  become: yes
+  apt_key:
+    keyserver: "{{ docker.repo_keyserver }}"
+    id: "{{ docker.repo_key_id }}"
+    state: present
+
+- name: Install Docker repo
+  become: yes
+  apt_repository:
+    repo: "{{ docker.repo }}"
+    state: present
+    update_cache: yes
+
+- name: Install Docker
+  become: yes
+  apt:
+    name: "{{ 'docker-ce=' + docker.version if docker.version else 'docker-ce' }}"
+
+- name: Add workspace user to docker group
+  become: yes
+  user:
+    append: yes
+    groups: docker
+    name: "{{ docker.workspace_user }}"
+  when: docker.workspace_user

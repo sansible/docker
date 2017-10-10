@@ -1,0 +1,11 @@
+---
+
+- name: Install Docker
+  include: install.yml
+  tags:
+    - build
+
+- name: Configure Docker
+  include: configure.yml
+  tags:
+    - configure

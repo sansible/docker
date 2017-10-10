@@ -1,0 +1,8 @@
+---
+
+docker:
+  repo_keyserver: hkp://keyserver.ubuntu.com:80
+  repo_key_id: 0EBFCD88
+  repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+  version: ~
+  workspace_user: ~
