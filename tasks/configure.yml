@@ -1,0 +1,7 @@
+---
+
+- name: Ensure Docker service is restarted
+  become: yes
+  service:
+    name: docker
+    state: started

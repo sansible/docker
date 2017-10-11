@@ -1,0 +1,27 @@
+---
+
+- name: Test Docker provision
+  hosts: all
+
+  pre_tasks:
+    - name: Update apt
+      become: yes
+      apt:
+        cache_valid_time: 1800
+        update_cache: yes
+      tags:
+        - build
+
+  roles:
+    - role: sansible.docker
+
+  post_tasks:
+    - name: Docker should already be started
+      become: yes
+      service:
+        name: docker
+        state: started
+      register: start_check
+      failed_when: start_check.changed
+      tags:
+        - assert
