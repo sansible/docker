@@ -1,6 +1,6 @@
 ---
 
-- name: Add thinpool configuration
+- name: Add a docker configuration file
   become: yes
   template:
     dest: /etc/docker/daemon.json
@@ -8,15 +8,14 @@
     mode: 0444
     owner: root
     src: daemon.json.j2
-  when: docker.thin_pool_device is not none
-  register: docker_thinpool_config
+  register: docker_config_file
 
-- name: Ensure Docker service is restarted when thinpool changed
+- name: Ensure Docker service is restarted with configuration changes
   become: yes
   service:
     name: docker
     state: restarted
-  when: docker_thinpool_config.changed
+  when: docker_config_file.changed
 
 - name: Ensure Docker service starts at boot
   become: yes
