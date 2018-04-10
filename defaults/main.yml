@@ -1,6 +1,7 @@
 ---
 
 docker:
+  bridge_ip: ~
   package_version:
     thin_provisioning_tools: 0.5.6*
   repo_keyserver: hkp://keyserver.ubuntu.com:80
