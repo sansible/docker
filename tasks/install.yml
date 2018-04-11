@@ -1,6 +1,6 @@
 ---
 
-- name: Install essential packages
+- name: Install Essential Packages
   become: yes
   apt:
     name: "{{ item }}"
@@ -9,36 +9,38 @@
     - ca-certificates
     - curl
 
-- name: Install thin-provisioning-tools if required
+- name: Install thin-provisioning-tools if Required
   become: yes
   apt:
-    name: "thin-provisioning-tools={{ docker.package_version.thin_provisioning_tools }}"
-  when: docker.thin_pool_device is not none
+    name: "thin-provisioning-tools={{ sansible_docker_thin_provisioning_tools_version }}"
+  when: sansible_docker_thin_pool_device is not none
 
 - name: Install kernel extras
   become: yes
   apt:
     name: "linux-image-extra-{{ ansible_kernel }}"
-  when: ansible_distribution_release == "trusty"
+  when: ansible_distribution_release == 'trusty'
+          and
+        ansible_virtualization_type != 'docker'
 
-- name: Add Docker gpg key
+- name: Add Docker GPG Key
   become: yes
   apt_key:
-    keyserver: "{{ docker.repo_keyserver }}"
-    id: "{{ docker.repo_key_id }}"
+    keyserver: "{{ sansible_docker_repo_keyserver }}"
+    id: "{{ sansible_docker_repo_key_id}}"
     state: present
 
-- name: Install Docker repo
+- name: Add Docker Repo
   become: yes
   apt_repository:
-    repo: "{{ docker.repo }}"
+    repo: "{{ sansible_docker_repo }}"
     state: present
     update_cache: yes
 
 - name: Install Docker
   become: yes
   apt:
-    name: "{{ 'docker-ce=' + docker.version if docker.version else 'docker-ce' }}"
+    name: "{{ 'docker-ce=' + sansible_docker_version if sansible_docker_version else 'docker-ce' }}"
 
 - name: Create /etc/docker
   become: yes
@@ -49,10 +51,10 @@
     path: /etc/docker
     state: directory
 
-- name: Add workspace user to docker group
+- name: Add Workspace User to Docker Group
   become: yes
   user:
     append: yes
     groups: docker
-    name: "{{ docker.workspace_user }}"
-  when: docker.workspace_user
+    name: "{{ sansible_docker_workspace_user }}"
+  when: sansible_docker_workspace_user is not none
