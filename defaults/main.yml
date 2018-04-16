@@ -1,12 +1,10 @@
 ---
 
-docker:
-  bridge_ip: ~
-  package_version:
-    thin_provisioning_tools: 0.5.6*
-  repo_keyserver: hkp://keyserver.ubuntu.com:80
-  repo_key_id: 0EBFCD88
-  repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
-  thin_pool_device: ~
-  version: ~
-  workspace_user: ~
+sansible_docker_bridge_ip: ~
+sansible_docker_repo: "deb [arch=amd64] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+sansible_docker_repo_key_id: 0EBFCD88
+sansible_docker_repo_keyserver: hkp://keyserver.ubuntu.com:80
+sansible_docker_thin_pool_device: ~
+sansible_docker_thin_provisioning_tools_version: 0.5.6*
+sansible_docker_version: ~
+sansible_docker_workspace_user: ~

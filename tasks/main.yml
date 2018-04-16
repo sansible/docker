@@ -3,8 +3,8 @@
 - name: Assert supported options
   assert:
     that:
-     - docker.thin_pool_device is none
-  when: ansible_distribution_release == "trusty"
+      - sansible_docker_thin_pool_device is none
+  when: ansible_distribution_release == 'trusty'
   tags:
     - always
 
