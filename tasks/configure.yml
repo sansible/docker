@@ -16,6 +16,8 @@
     name: docker
     state: restarted
   when: docker_config_file.changed
+  tags:
+    - skip_ansible_lint
 
 - name: Ensure Docker service starts at boot
   become: yes
