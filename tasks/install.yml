@@ -23,11 +23,18 @@
           and
         ansible_virtualization_type != 'docker'
 
-- name: Add Docker GPG Key
+- name: Download Docker PGP key (works with Bionic behind a proxy)
+  become: yes
+  get_url:
+    dest: /usr/local/src/docker.asc
+    mode: 0644
+    url: "https://{{ sansible_docker_repo_keyserver }}/pks/lookup?op=get&search=0x{{ sansible_docker_repo_key_id }}"
+
+- name: Ensures Docker PGP key is known
   become: yes
   apt_key:
-    keyserver: "{{ sansible_docker_repo_keyserver }}"
-    id: "{{ sansible_docker_repo_key_id}}"
+    file: /usr/local/src/docker.asc
+    id: "{{ sansible_docker_repo_key_id }}"
     state: present
 
 - name: Add Docker Repo
