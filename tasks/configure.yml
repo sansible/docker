@@ -10,6 +10,13 @@
     src: daemon.json.j2
   register: docker_config_file
 
+- name: Wait for thin pool device to be available
+  become: yes
+  wait_for:
+    path: "{{ sansible_docker_thin_pool_device }}"
+    state: present
+  when: sansible_docker_thin_pool_device is not none
+
 - name: Ensure Docker service is restarted with configuration changes
   become: yes
   service:
