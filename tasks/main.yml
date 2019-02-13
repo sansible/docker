@@ -1,10 +1,25 @@
 ---
 
-- name: Assert supported options
+- name: Assert thinpool not used on trusty
   assert:
     that:
-      - sansible_docker_thin_pool_device is none
-  when: ansible_distribution_release == 'trusty'
+      - sansible_docker_daemon_config['storage-driver'] != "devicemapper"
+  when:
+    - sansible_docker_daemon_config is not none
+    - "'storage-driver' in sansible_docker_daemon_config"
+    - ansible_distribution_release == 'trusty'
+  tags:
+    - always
+
+- name: Assert thinpool config makes sense
+  assert:
+    that:
+      - "'storage-opts' in sansible_docker_daemon_config"
+      - sansible_docker_daemon_config['storage-opts'] | select('match', '^dm.directlvm_device=.*') | list | length == 1
+  when:
+    - sansible_docker_daemon_config is not none
+    - "'storage-driver' in sansible_docker_daemon_config"
+    - sansible_docker_daemon_config['storage-driver'] == "devicemapper"
   tags:
     - always
 

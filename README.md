@@ -17,7 +17,7 @@ To install run `ansible-galaxy install sansible.docker` or add this to your
 
 ```YAML
 - name: sansible.docker
-  version: v2.1
+  version: v3.0.x
 ```
 
 and run `ansible-galaxy install -p ./roles -r roles.yml`
@@ -27,13 +27,14 @@ and run `ansible-galaxy install -p ./roles -r roles.yml`
 
 This role uses tags: **build** and **configure**
 
-* `build` - Installs ...
-* `configure` - Configures ...
+* `build` - Installs Docker and supporting tools
+* `configure` - Configures Docker Daemon
 
 
 ## Examples
 
-Simply include role in your playbook
+Simply include this role in your playbook, options for Docker's daemon.json 
+file can be specified via the ```sansible_docker_daemon_config``` variable:
 
 ```YAML
 - name: Install and configure docker
@@ -41,6 +42,9 @@ Simply include role in your playbook
 
   roles:
     - role: sansible.docker
+      sansible_docker_daemon_config:
+        bip: 10.8.0.0/25
+        storage-driver: overlay2
 ```
 
 Setup user for sudo-less access:
@@ -57,3 +61,16 @@ Setup user for sudo-less access:
 Note that if you want to make use of Docker via this user within the same
 Ansible run then you will need to be aware of this issue:
 [https://github.com/ansible/ansible-modules-core/issues/921]().
+
+This role supports DeviceMapper via LVM as well:
+
+```YAML
+- name: Install and configure docker
+  hosts: "somehost"
+
+  roles:
+    - role: sansible.docker
+      storage-driver: devicemapper
+      storage-opts:
+        - "dm.directlvm_device=/dev/sdb"
+```

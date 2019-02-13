@@ -1,11 +1,1 @@
-{
-{% if sansible_docker_thin_pool_device is not none %}
-  "storage-driver": "devicemapper",
-  "storage-opts": [
-    "dm.directlvm_device={{ sansible_docker_thin_pool_device }}"
-  ]{% if sansible_docker_bridge_ip is not none %},{% endif %}
-{% endif %}
-{% if sansible_docker_bridge_ip is not none %}
-  "bip": "{{ sansible_docker_bridge_ip }}"
-{% endif %}
-}
+{{ sansible_docker_daemon_config | to_nice_json }}

@@ -3,25 +3,27 @@
 - name: Install Essential Packages
   become: yes
   apt:
-    name: "{{ item }}"
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - curl
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
 
 - name: Install thin-provisioning-tools if Required
   become: yes
   apt:
     name: "thin-provisioning-tools={{ sansible_docker_thin_provisioning_tools_version }}"
-  when: sansible_docker_thin_pool_device is not none
+  when:
+    - sansible_docker_daemon_config is not none
+    - "'storage-driver' in sansible_docker_daemon_config"
+    - sansible_docker_daemon_config['storage-driver'] == "devicemapper"
 
 - name: Install kernel extras
   become: yes
   apt:
     name: "linux-image-extra-{{ ansible_kernel }}"
-  when: ansible_distribution_release == 'trusty'
-          and
-        ansible_virtualization_type != 'docker'
+  when:
+    - ansible_distribution_release == 'trusty'
+    - ansible_virtualization_type != 'docker'
 
 - name: Download Docker PGP key (works with Bionic behind a proxy)
   become: yes
