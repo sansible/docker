@@ -1,6 +1,6 @@
 ---
 
-- name: Add a docker configuration file
+- name: Add docker daemon configuration file
   become: yes
   template:
     dest: /etc/docker/daemon.json
@@ -8,21 +8,33 @@
     mode: 0444
     owner: root
     src: daemon.json.j2
-  register: docker_config_file
+  register: sansible_docker_config_file_update
+  when: sansible_docker_daemon_config is not none
 
 - name: Wait for thin pool device to be available
   become: yes
   wait_for:
-    path: "{{ sansible_docker_thin_pool_device }}"
+    path: "{{
+        sansible_docker_daemon_config['storage-opts'] |
+        select('match', '^dm.directlvm_device=.*') |
+        list |
+        first |
+        replace('dm.directlvm_device=', '')
+      }}"
     state: present
-  when: sansible_docker_thin_pool_device is not none
+  when:
+    - sansible_docker_daemon_config is not none
+    - "'storage-driver' in sansible_docker_daemon_config"
+    - sansible_docker_daemon_config['storage-driver'] == "devicemapper"
 
 - name: Ensure Docker service is restarted with configuration changes
   become: yes
   service:
     name: docker
     state: restarted
-  when: docker_config_file.changed
+  when:
+    - sansible_docker_daemon_config is not none
+    - sansible_docker_config_file_update.changed
   tags:
     - skip_ansible_lint
 

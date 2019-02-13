@@ -15,4 +15,6 @@
           system: no
 
     - role: docker
+      sansible_docker_daemon_config:
+        storage-driver: overlay2
       sansible_docker_workspace_user: docker_test
