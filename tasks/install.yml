@@ -30,7 +30,11 @@
   get_url:
     dest: /usr/local/src/docker.asc
     mode: 0644
-    url: "https://{{ sansible_docker_repo_keyserver }}/pks/lookup?op=get&search=0x{{ sansible_docker_repo_key_id }}"
+    url: "{{ sansible_docker_repo_keyserver }}/pks/lookup?op=get&search=0x{{ sansible_docker_repo_key_id }}"
+  retries: 2
+  delay: 10
+  register: sansible_docker_pgp_result
+  until: sansible_docker_pgp_result is succeeded
 
 - name: Ensures Docker PGP key is known
   become: yes
